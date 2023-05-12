@@ -1,0 +1,47 @@
+import pygame
+import random
+from bullet import Bullet
+
+# Colori
+BLUE = (0, 0, 255)
+YELLOW = (255, 255, 0)
+
+# Classe per i nemici
+class Enemy(pygame.sprite.Sprite):
+    def __init__(self, screen_width, screen_height, all_sprites,enemy_bullets):
+        super().__init__()
+        raw_image = pygame.image.load("img/enemy1.png").convert_alpha()
+        self.image = pygame.transform.scale(raw_image, (50, 50))
+        self.rect = self.image.get_rect()
+        self.screen_width = screen_width  # Salva le dimensioni della finestra di gioco come attributi
+        self.screen_height = screen_height
+        self.rect.x = random.randint(0, self.screen_width - self.rect.width)
+        self.rect.y = random.randint(-100, -40)
+        self.speed_y = random.randint(1, 3)
+        self.shoot_delay = 120  # Ritardo tra i colpi dei nemici
+        self.last_shot = pygame.time.get_ticks()
+        self.all_sprites = all_sprites  # Salva la variabile all_sprites
+        self.enemy_bullets = enemy_bullets
+        self.damage=3
+
+    def update(self):
+        self.rect.y += self.speed_y
+        if self.rect.top > self.screen_height + 10 or self.rect.left < -self.rect.width or self.rect.right > self.screen_width + self.rect.width:
+            self.rect.x = random.randint(0, self.screen_width - self.rect.width)
+            self.rect.y = random.randint(-100, -40)
+            self.speed_y = random.randint(1, 3)
+
+        self.shoot()
+
+    def shoot(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_shot > self.shoot_delay:
+            self.last_shot = now
+
+            # Estrai casualmente un numero dalla lista [1, 2, 3, 4]
+            choice = random.choice([1, 2, 3, 4])
+
+            if choice == 3:
+                bullet = Bullet(self.rect.centerx, self.rect.bottom, YELLOW,True)  # Creazione del proiettile dei nemici
+                self.enemy_bullets.add(bullet)
+                self.all_sprites.add(bullet)  # Aggiungi il proiettile alla variabile all_sprites
