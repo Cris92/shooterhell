@@ -34,7 +34,9 @@ def update_game(game, events):
             game.ally_bullets.add(bullet)
             game.player.last_shot=time.time()
     # Collisioni tra proiettili e nemici
-    hits = pygame.sprite.groupcollide(game.enemies, game.ally_bullets, True, True)
+    hits = pygame.sprite.groupcollide(game.enemies, game.ally_bullets, False, True)
+    for enemy,bullet in hits.items():
+        enemy.is_hit=True
     for hit_enemy in hits:
         enemy = Enemy(game.WIDTH, game.HEIGHT, game.all_sprites, game.enemy_bullets)
         game.all_sprites.add(enemy)

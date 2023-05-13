@@ -24,16 +24,36 @@ class Enemy(pygame.sprite.Sprite):
         self.all_sprites = all_sprites  # Salva la variabile all_sprites
         self.enemy_bullets = enemy_bullets
         self.damage=3
+        self.explosion_frames = []
+        self.is_hit = False
+        self.frame_counter = 0
+        self.frame_delay = 5  
+        self.stop_movement = False
+        for i in range(1,7):
+            raw_image = pygame.image.load(f"img/explosion/explosion ({i}).png").convert_alpha()
+            image=pygame.transform.scale(raw_image,(50,50))
+            self.explosion_frames.append(image)
 
     def update(self):
-        self.rect.y += self.speed_y
-        self.rect.x += self.speed_x
-        if self.rect.top > self.screen_height + 10 or self.rect.left < -self.rect.width or self.rect.right > self.screen_width + self.rect.width:
-            self.rect.x = random.randint(0, self.screen_width - self.rect.width)
-            self.rect.y = random.randint(-100, -40)
-            self.speed_y = random.randint(1, 3)
-            self.speed_x = random.randint(-2, 2)
-        self.shoot()
+        if self.is_hit:
+            self.stop_movement = True
+            if len(self.explosion_frames) >0:
+                if self.frame_counter>= self.frame_delay:
+                    self.image=self.explosion_frames.pop(0)
+                    self.frame_counter=0
+                else:
+                    self.frame_counter+=1
+            else:
+                self.kill()
+        if self.stop_movement == False:
+            self.rect.y += self.speed_y
+            self.rect.x += self.speed_x
+            if self.rect.top > self.screen_height + 10 or self.rect.left < -self.rect.width or self.rect.right > self.screen_width + self.rect.width:
+                self.rect.y = random.randint(-100, -40)
+                self.speed_y = random.randint(1, 3)
+                self.rect.x = random.randint(0, self.screen_width - self.rect.width)
+                self.speed_x = random.randint(-2, 2)
+            self.shoot()
 
     def shoot(self):
         now = pygame.time.get_ticks()
@@ -47,3 +67,5 @@ class Enemy(pygame.sprite.Sprite):
                 bullet = Bullet(self.rect.centerx, self.rect.bottom, YELLOW,True)  # Creazione del proiettile dei nemici
                 self.enemy_bullets.add(bullet)
                 self.all_sprites.add(bullet)  # Aggiungi il proiettile alla variabile all_sprites
+
+    
