@@ -27,8 +27,6 @@ def update_game(game, events):
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_SPACE:
                 game.player.is_shooting = False
-            if event.key == pygame.K_LCTRL:
-                game.player.is_shooting = False
 
     game.all_sprites.update()
 
@@ -36,9 +34,7 @@ def update_game(game, events):
     if game.player.is_shooting:
         if time.time()-game.player.last_shot > game.player.shoot_vel:
             bullet = game.player.shoot()
-            if bullet is None:
-                print("Empty loader")
-            else:
+            if bullet is not None:
                 game.all_sprites.add(bullet)
                 game.ally_bullets.add(bullet)
                 game.player.last_shot=time.time()
