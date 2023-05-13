@@ -42,21 +42,19 @@ def update_game(game, events):
                 game.all_sprites.add(bullet)
                 game.ally_bullets.add(bullet)
                 game.player.last_shot=time.time()
-    # Collisioni tra proiettili amici e nemici
+    # Collisioni tra proiettili e nemici
     hits = pygame.sprite.groupcollide(game.enemies, game.ally_bullets, False, False)
     for enemy,bullets in hits.items():
         enemy.is_hit=True
         for bullet in bullets:
             if bullet.type=="single_bullet":
                 bullet.kill()
-        enemy.kill()  # Rimuovi il nemico distrutto dalla lista degli sprite
-        game.enemies.remove(enemy)  # Rimuovi il nemico distrutto dalla lista degli avversari nel gioco
-
     for hit_enemy in hits:
-        enemy = Enemy(game.WIDTH, game.HEIGHT, game.all_sprites, game.enemy_bullets)
-        game.all_sprites.add(enemy)
-        game.enemies.add(enemy)
-        game.score += 1
+        if enemy.rect.x>=0 and enemy.rect.y>=0:
+            enemy = Enemy(game.WIDTH, game.HEIGHT, game.all_sprites, game.enemy_bullets)
+            game.all_sprites.add(enemy)
+            game.enemies.add(enemy)
+            game.score += 1
     
     # Collisioni tra proiettili e proiettili amici
     hits = pygame.sprite.groupcollide(game.enemy_bullets, game.ally_bullets, True, True)
@@ -85,6 +83,7 @@ def update_game(game, events):
     game.all_sprites.draw(game.screen)
     game.ui.show_score(game.screen, game.score)
     game.ui.show_health_bar(game.screen, game.player)
+    game.ui.show_super_bar(game.screen, game.player)
     pygame.display.flip()
 
 def open_main_menu(game):

@@ -45,7 +45,12 @@ class Enemy(pygame.sprite.Sprite):
                     self.frame_counter+=1
             else:
                 self.kill()
+                
         if self.stop_movement == False:
+            choice = random.randint(1,30)
+            print(choice)
+            if choice ==3:
+                self.speed_x=-self.speed_x
             self.rect.y += self.speed_y
             self.rect.x += self.speed_x
             if self.rect.top > self.screen_height + 10 or self.rect.left < -self.rect.width or self.rect.right > self.screen_width + self.rect.width:
@@ -53,11 +58,13 @@ class Enemy(pygame.sprite.Sprite):
                 self.speed_y = random.randint(1, 3)
                 self.rect.x = random.randint(0, self.screen_width - self.rect.width)
                 self.speed_x = random.randint(-2, 2)
+                print(self.speed_x)
             if self.rect.right > self.screen_width or self.rect.left < 0:
                 self.speed_x=-self.speed_x
                 
             self.shoot()
 
+    
     def shoot(self):
         now = pygame.time.get_ticks()
         if now - self.last_shot > self.shoot_delay:
@@ -66,7 +73,7 @@ class Enemy(pygame.sprite.Sprite):
             # Estrai casualmente un numero dalla lista [1, 2, 3, 4]
             choice = random.randint(1, 6)
             if choice == 3:
-                bullet = Bullet(self.rect.centerx, self.rect.bottom, YELLOW,True)  # Creazione del proiettile dei nemici
+                bullet = Bullet(self.rect.centerx, self.rect.bottom, YELLOW,True,screen_height=self.screen_height,screen_width=self.screen_width)  # Creazione del proiettile dei nemici
                 self.enemy_bullets.add(bullet)
                 self.all_sprites.add(bullet)  # Aggiungi il proiettile alla variabile all_sprites
 
