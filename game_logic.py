@@ -52,7 +52,7 @@ def update_game(game, events):
             if hit_done:
                 shake_screen(game,10, 0.2)
         if game.player.HP <= 0:
-            open_pause_menu(game)  # Apri il menu di game over
+            open_game_over_menu(game)  # Apri il menu di game over
 
     # Collisioni tra giocatore e proiettili nemici
     hits = pygame.sprite.spritecollide(game.player, game.enemy_bullets, False)
@@ -62,7 +62,7 @@ def update_game(game, events):
             if hit_done:
                 shake_screen(game,10, 0.2)
         if game.player.HP <= 0:
-            open_pause_menu(game)  # Apri il menu di game over
+            open_game_over_menu(game)  # Apri il menu di game over
 
     game.screen.blit(game.background_image, (0, 0))
     game.all_sprites.draw(game.screen)
@@ -75,6 +75,11 @@ def open_main_menu(game):
     game.game_main_menu.mainloop(game.screen)
 
 def open_pause_menu(game):
+    game.paused = True
+    game.pause_over_menu.enable()
+    game.pause_over_menu.mainloop(game.screen)
+
+def open_game_over_menu(game):
     game.paused = True
     game.game_over_menu.enable()
     game.game_over_menu.mainloop(game.screen)

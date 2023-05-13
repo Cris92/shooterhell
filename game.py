@@ -50,8 +50,10 @@ class Game:
         self.game_over_menu = pygame_menu.Menu(width=400, height=600, title='Game Over', theme=pygame_menu.themes.THEME_BLUE)
         self.game_over_menu.add.button('Restart', self.restart_game)
         self.game_over_menu.add.button('Quit', self.quit_game)
-        self.game_over_menu.add.button('Resume', self.resume_game)
-        self.game_over_menu.set_onclose(self.handle_quit_event)
+
+        self.pause_over_menu = pygame_menu.Menu(width=400, height=600, title='Pause', theme=pygame_menu.themes.THEME_BLUE)
+        self.pause_over_menu.add.button('Resume', self.resume_game)
+        self.pause_over_menu.add.button('Quit', self.quit_game)
 
     # Creazione del menu iniziale
         self.main_menu = pygame_menu.Menu(
@@ -63,7 +65,7 @@ class Game:
         self.main_menu.set_onclose(self.handle_quit_event)
 
         self.main_menu.mainloop(self.screen)
-    def openmainmenu(self):
+    def open_main_menu_start(self):
         open_main_menu(self)
 
     def start_game(self):
@@ -101,4 +103,4 @@ class Game:
 
     def resume_game(self):
         self.paused = False
-        self.game_over_menu.disable()
+        self.pause_over_menu.disable()

@@ -18,6 +18,7 @@ class Enemy(pygame.sprite.Sprite):
         self.rect.x = random.randint(0, self.screen_width - self.rect.width)
         self.rect.y = random.randint(-100, -40)
         self.speed_y = random.randint(1, 3)
+        self.speed_x = random.randint(-2, 2)
         self.shoot_delay = 120  # Ritardo tra i colpi dei nemici
         self.last_shot = pygame.time.get_ticks()
         self.all_sprites = all_sprites  # Salva la variabile all_sprites
@@ -26,11 +27,12 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         self.rect.y += self.speed_y
+        self.rect.x += self.speed_x
         if self.rect.top > self.screen_height + 10 or self.rect.left < -self.rect.width or self.rect.right > self.screen_width + self.rect.width:
             self.rect.x = random.randint(0, self.screen_width - self.rect.width)
             self.rect.y = random.randint(-100, -40)
             self.speed_y = random.randint(1, 3)
-
+            self.speed_x = random.randint(-2, 2)
         self.shoot()
 
     def shoot(self):
