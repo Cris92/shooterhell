@@ -65,8 +65,6 @@ class Enemy(pygame.sprite.Sprite):
 
             # Estrai casualmente un numero dalla lista [1, 2, 3, 4]
             choice = random.randint(1, 6)
-            print (choice)
-
             if choice == 3:
                 bullet = Bullet(self.rect.centerx, self.rect.bottom, YELLOW,True)  # Creazione del proiettile dei nemici
                 self.enemy_bullets.add(bullet)

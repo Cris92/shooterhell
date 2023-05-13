@@ -4,14 +4,18 @@ from bullet import Bullet
 
 # Colori
 RED = (255, 0, 0)
-
+SCREEN_WIDTH=0
+SCREEN_HEIGHT=0
 # Classe per il giocatore
 class Player(pygame.sprite.Sprite):
     def __init__(self, screen_width, screen_height, HP=10):
         super().__init__()
+        self.SCREEN_WIDTH=screen_width
+        self.SCREEN_HEIGHT=screen_height
         raw_image = pygame.image.load("img/spaceship.png").convert_alpha()
         self.max_hp = 10
         self.HP = HP
+        self.super_move_uses=3
         self.image = pygame.transform.scale(raw_image, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.centerx = screen_width // 2
@@ -27,6 +31,7 @@ class Player(pygame.sprite.Sprite):
         self.fade_alpha = 0  # Opacità corrente per il fading
         self.fade_start_time = 0  # Tempo di inizio del fading
         self.last_shot= time.time()
+        self.shoot_type=""
         self.shoot_vel=0.5
 
     def update(self):
@@ -72,7 +77,11 @@ class Player(pygame.sprite.Sprite):
             self.rect.bottom = self.screen_height
 
     def shoot(self):
-        bullet = Bullet(self.rect.centerx, self.rect.top, is_danger=False)
+        if self.super_move_uses>0 and self.shoot_type == "super_move_laser":
+            self.super_move_uses-=1
+        elif self.super_move_uses<=0 and self.shoot_type == "super_move_laser":
+            return
+        bullet = Bullet(self.rect.centerx, self.rect.top, is_danger=False,type = self.shoot_type,screen_height=self.SCREEN_HEIGHT)
         return bullet
 
     def hit(self, damage):

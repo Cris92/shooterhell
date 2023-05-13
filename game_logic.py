@@ -14,6 +14,11 @@ def update_game(game, events):
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 game.player.is_shooting = True
+                game.player.shoot_type = "single_bullet"
+            if event.key == pygame.K_LCTRL:
+                game.player.is_shooting = True
+                game.player.is_shooting_super = True
+                game.player.shoot_type = "super_move_laser"
             elif event.key == pygame.K_ESCAPE:
                 if not game.paused:
                     open_pause_menu(game)
@@ -22,21 +27,31 @@ def update_game(game, events):
         elif event.type == pygame.KEYUP:
             if event.key == pygame.K_SPACE:
                 game.player.is_shooting = False
+            if event.key == pygame.K_LCTRL:
+                game.player.is_shooting = False
 
     game.all_sprites.update()
 
     # Fuoco continuo se il tasto spazio è premuto
     if game.player.is_shooting:
         if time.time()-game.player.last_shot > game.player.shoot_vel:
-            print (game.player.last_shot - time.time())
             bullet = game.player.shoot()
-            game.all_sprites.add(bullet)
-            game.ally_bullets.add(bullet)
-            game.player.last_shot=time.time()
-    # Collisioni tra proiettili e nemici
-    hits = pygame.sprite.groupcollide(game.enemies, game.ally_bullets, False, True)
-    for enemy,bullet in hits.items():
+            if bullet is None:
+                print("Empty loader")
+            else:
+                game.all_sprites.add(bullet)
+                game.ally_bullets.add(bullet)
+                game.player.last_shot=time.time()
+    # Collisioni tra proiettili amici e nemici
+    hits = pygame.sprite.groupcollide(game.enemies, game.ally_bullets, False, False)
+    for enemy,bullets in hits.items():
         enemy.is_hit=True
+        for bullet in bullets:
+            if bullet.type=="single_bullet":
+                bullet.kill()
+        enemy.kill()  # Rimuovi il nemico distrutto dalla lista degli sprite
+        game.enemies.remove(enemy)  # Rimuovi il nemico distrutto dalla lista degli avversari nel gioco
+
     for hit_enemy in hits:
         enemy = Enemy(game.WIDTH, game.HEIGHT, game.all_sprites, game.enemy_bullets)
         game.all_sprites.add(enemy)
