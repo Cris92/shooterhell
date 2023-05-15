@@ -23,12 +23,10 @@ class Reward(pygame.sprite.Sprite):
         self.rect = self.image.get_rect()
         self.rect.centerx = enemy.rect.x
         self.rect.centery = enemy.rect.y
-        self.speed_x = enemy.speed_x // 2  # Muoversi nella stessa direzione del nemico ma più lentamente
-        self.speed_y = enemy.speed_y // 2
+        self.speed_y = 1
         print(self.rect)
 
     def update(self):
-        self.rect.x += self.speed_x
         self.rect.y += self.speed_y
 
         if self.rect.left < 0 or self.rect.right > self.screen_width or self.rect.top < 0 or self.rect.bottom > self.screen_height:

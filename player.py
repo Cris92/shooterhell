@@ -1,19 +1,18 @@
 import pygame
 import time
 from bullet import Bullet
-
 # Colori
 RED = (255, 0, 0)
 
 # Classe per il giocatore
 class Player(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, HP=10):
+    def __init__(self, screen_width, screen_height, MAX_HP=1,game=None):
         super().__init__()
         self.SCREEN_WIDTH=screen_width
         self.SCREEN_HEIGHT=screen_height
         raw_image = pygame.image.load("img/spaceship.png").convert_alpha()
-        self.max_hp = 10
-        self.HP = HP
+        self.max_hp = MAX_HP
+        self.HP = self.max_hp
         self.super_move_uses=1
         self.image = pygame.transform.scale(raw_image, (50, 50))
         self.rect = self.image.get_rect()
@@ -36,8 +35,22 @@ class Player(pygame.sprite.Sprite):
         self.super_to_charge=True
         self.shoot_type=""
         self.shoot_vel=0.5
+        self.explosion_frames = []
+        self.is_hit = False
+        self.frame_counter = 0
+        self.frame_delay = 10  
+        self.explosion_frames=[]
+        self.game=game
+        for i in range(1,7):
+            raw_image = pygame.image.load(f"img/explosion/explosion ({i}).png").convert_alpha()
+            image=pygame.transform.scale(raw_image,(50,50))
+            self.explosion_frames.append(image)
 
     def update(self):
+        if self.is_dead():
+            self.explode()
+            return
+
         if self.last_frame_super!=self.frame_for_super:
             self.last_frame_super+=1
         else:
@@ -63,15 +76,15 @@ class Player(pygame.sprite.Sprite):
         self.speed_x = 0
         self.speed_y = 0
         keystate = pygame.key.get_pressed()
-
-        if keystate[pygame.K_LEFT]:
-            self.speed_x = -5
-        if keystate[pygame.K_RIGHT]:
-            self.speed_x = 5
-        if keystate[pygame.K_DOWN]:
-            self.speed_y = 5
-        if keystate[pygame.K_UP]:
-            self.speed_y = -5
+        if not self.is_dead():
+            if keystate[pygame.K_LEFT]:
+                self.speed_x = -5
+            if keystate[pygame.K_RIGHT]:
+                self.speed_x = 5
+            if keystate[pygame.K_DOWN]:
+                self.speed_y = 5
+            if keystate[pygame.K_UP]:
+                self.speed_y = -5
 
         self.rect.x += self.speed_x *self.speed_up
         self.rect.y += self.speed_y *self.speed_up
@@ -107,3 +120,23 @@ class Player(pygame.sprite.Sprite):
             return True
         else:
             return False
+    
+    def is_dead(self):
+        if self.HP <= 0:
+            return True
+        else:
+            return False
+        
+    def explode(self):
+        if self.frame_counter < len(self.explosion_frames) * self.frame_delay:
+            self.image = self.explosion_frames[self.frame_counter // self.frame_delay]
+            self.frame_counter += 1
+        else:
+            self.kill()
+            self.open_game_over_menu(self.game)
+        
+    def open_game_over_menu(self,game):
+        game.paused = True
+        game.game_over_menu.enable()
+        game.game_over_menu.mainloop(game.screen)
+

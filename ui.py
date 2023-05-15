@@ -21,6 +21,8 @@ class UI:
         health_bar_width = 200
         health = player.HP
         max_health = player.max_hp
+        print("health"+str(health))
+        print("max_health"+str(max_health))
         health_percentage = health / max_health
         font = pygame.font.Font(None, 20)
         text = font.render("Health:", True, (255, 255, 255))

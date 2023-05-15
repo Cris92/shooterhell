@@ -12,24 +12,30 @@ def update_game(game, events):
         if event.type == pygame.QUIT:
             pygame.quit()
             quit()
+        
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_SPACE:
-                game.player.is_shooting = True
-                game.player.shoot_type = "single_bullet"
-            if event.key == pygame.K_LCTRL:
-                game.player.is_shooting = True
-                game.player.is_shooting_super = True
-                game.player.shoot_type = "super_move_laser"
-            elif event.key == pygame.K_ESCAPE:
-                if not game.paused:
-                    open_pause_menu(game)
-                else:
-                    resume_game(game)
+            if game.player.is_dead() == False:
+                if event.key == pygame.K_SPACE:
+                    game.player.is_shooting = True
+                    game.player.shoot_type = "single_bullet"
+                if event.key == pygame.K_LCTRL:
+                    game.player.is_shooting = True
+                    game.player.is_shooting_super = True
+                    game.player.shoot_type = "super_move_laser"
+                elif event.key == pygame.K_ESCAPE:
+                    if not game.paused:
+                        open_pause_menu(game)
+                    else:
+                        resume_game(game)
         elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_SPACE or event.key == pygame.K_LCTRL:
-                game.player.is_shooting = False
+            if game.player.is_dead() == False:
+                if event.key == pygame.K_SPACE or event.key == pygame.K_LCTRL:
+                    game.player.is_shooting = False
 
     game.all_sprites.update()
+
+    after_death_frame=10
+    actual_after_death_frame=0
 
     # Fuoco continuo se il tasto spazio è premuto
     if game.player.is_shooting:
@@ -71,9 +77,6 @@ def update_game(game, events):
             hit_done=game.player.hit(hit_enemy.damage)
             if hit_done:
                 shake_screen(game,10, 0.2)
-        if game.player.HP <= 0:
-            open_game_over_menu(game)  # Apri il menu di game over
-
     
     # Collisioni tra giocatore e reward
     hits = pygame.sprite.spritecollide(game.player, game.rewards, False)
@@ -88,8 +91,6 @@ def update_game(game, events):
             hit_done=game.player.hit(hit_bullet.damage)
             if hit_done:
                 shake_screen(game,10, 0.2)
-        if game.player.HP <= 0:
-            open_game_over_menu(game)  # Apri il menu di game over
 
     game.screen.blit(game.background_image, (0, 0))
     game.all_sprites.draw(game.screen)
@@ -106,12 +107,6 @@ def open_pause_menu(game):
     game.paused = True
     game.pause_over_menu.enable()
     game.pause_over_menu.mainloop(game.screen)
-
-def open_game_over_menu(game):
-    game.paused = True
-    game.game_over_menu.enable()
-    game.game_over_menu.mainloop(game.screen)
-
 
 def resume_game(game):
     game.paused = False

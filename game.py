@@ -29,7 +29,7 @@ class Game:
         self.ally_bullets = pygame.sprite.Group()
         self.enemy_bullets = pygame.sprite.Group()
 
-        self.player = Player(WIDTH, HEIGHT,10)
+        self.player = Player(WIDTH, HEIGHT,1,self)
         self.all_sprites.add(self.player)
 
         self.ui = UI(WIDTH, HEIGHT)
