@@ -48,7 +48,6 @@ class Enemy(pygame.sprite.Sprite):
                 
         if self.stop_movement == False:
             choice = random.randint(1,30)
-            print(choice)
             if choice ==3:
                 self.speed_x=-self.speed_x
             self.rect.y += self.speed_y
@@ -58,7 +57,6 @@ class Enemy(pygame.sprite.Sprite):
                 self.speed_y = random.randint(1, 3)
                 self.rect.x = random.randint(0, self.screen_width - self.rect.width)
                 self.speed_x = random.randint(-2, 2)
-                print(self.speed_x)
             if self.rect.right > self.screen_width or self.rect.left < 0:
                 self.speed_x=-self.speed_x
                 

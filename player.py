@@ -14,7 +14,7 @@ class Player(pygame.sprite.Sprite):
         raw_image = pygame.image.load("img/spaceship.png").convert_alpha()
         self.max_hp = 10
         self.HP = HP
-        self.super_move_uses=0
+        self.super_move_uses=1
         self.image = pygame.transform.scale(raw_image, (50, 50))
         self.rect = self.image.get_rect()
         self.rect.centerx = screen_width // 2

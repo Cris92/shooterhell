@@ -27,10 +27,10 @@ class Bullet(pygame.sprite.Sprite):
         elif self.type=="super_move_laser":
             img="img/super_laser.png"
             raw_image = pygame.image.load(img).convert_alpha()
-            self.image = pygame.transform.scale(raw_image, (100,self.screen_height))
+            self.image = pygame.transform.scale(raw_image, (50,self.screen_height))
             self.rect = self.image.get_rect()
             self.rect.centerx = x
-            self.rect.bottom = y -self.rect.height
+            self.rect.bottom = self.rect.height - y
             self.speed_y = 0
             self.damage = damage
             self.frame_duration = 1000
@@ -47,8 +47,10 @@ class Bullet(pygame.sprite.Sprite):
                 if self.rect.bottom < 0:
                     self.kill()
             else:
-                self.rect.centerx =self.owner.rect.x
+                self.rect.x =self.owner.rect.x
                 self.rect.bottom =self.owner.rect.y
+                print("frame thrown:"+str(self.frame_thrown))
+                print("frame duration:"+str(self.frame_duration))
                 if self.frame_duration==self.frame_thrown:
                     self.kill()
                 else:

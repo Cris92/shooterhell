@@ -25,7 +25,7 @@ def update_game(game, events):
                 else:
                     resume_game(game)
         elif event.type == pygame.KEYUP:
-            if event.key == pygame.K_SPACE:
+            if event.key == pygame.K_SPACE or event.key == pygame.K_LCTRL:
                 game.player.is_shooting = False
 
     game.all_sprites.update()
@@ -38,6 +38,8 @@ def update_game(game, events):
                 game.all_sprites.add(bullet)
                 game.ally_bullets.add(bullet)
                 game.player.last_shot=time.time()
+
+
     # Collisioni tra proiettili e nemici
     hits = pygame.sprite.groupcollide(game.enemies, game.ally_bullets, False, False)
     for enemy,bullets in hits.items():
@@ -53,7 +55,11 @@ def update_game(game, events):
             game.score += 1
     
     # Collisioni tra proiettili e proiettili amici
-    hits = pygame.sprite.groupcollide(game.enemy_bullets, game.ally_bullets, True, True)
+    hits = pygame.sprite.groupcollide(game.enemy_bullets, game.ally_bullets, True, False)
+    for e_bullet,a_bullets in hits.items():
+        for a_bullet in a_bullets:
+            if a_bullet.type=="single_bullet":
+                a_bullet.kill()
 
     # Collisioni tra giocatore e nemici
     hits = pygame.sprite.spritecollide(game.player, game.enemies, True)
