@@ -1,6 +1,7 @@
 import pygame
 import random
 from bullet import Bullet
+from reward import Reward
 
 # Colori
 BLUE = (0, 0, 255)
@@ -8,21 +9,22 @@ YELLOW = (255, 255, 0)
 
 # Classe per i nemici
 class Enemy(pygame.sprite.Sprite):
-    def __init__(self, screen_width, screen_height, all_sprites,enemy_bullets):
+    def __init__(self, game):
         super().__init__()
+        self.game=game
         raw_image = pygame.image.load("img/enemy1.png").convert_alpha()
         self.image = pygame.transform.scale(raw_image, (50, 50))
         self.rect = self.image.get_rect()
-        self.screen_width = screen_width  # Salva le dimensioni della finestra di gioco come attributi
-        self.screen_height = screen_height
-        self.rect.x = random.randint(0, self.screen_width - self.rect.width)
+        self.screen_width = game.WIDTH  # Salva le dimensioni della finestra di gioco come attributi
+        self.screen_height = game.HEIGHT
+        self.rect.x = random.randint(0, game.WIDTH - self.rect.width)
         self.rect.y = random.randint(-100, -40)
         self.speed_y = random.randint(1, 3)
         self.speed_x = random.randint(-2, 2)
         self.shoot_delay = 120  # Ritardo tra i colpi dei nemici
         self.last_shot = pygame.time.get_ticks()
-        self.all_sprites = all_sprites  # Salva la variabile all_sprites
-        self.enemy_bullets = enemy_bullets
+        self.all_sprites = game.all_sprites  # Salva la variabile all_sprites
+        self.enemy_bullets = game.enemy_bullets
         self.damage=3
         self.explosion_frames = []
         self.is_hit = False
@@ -36,6 +38,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def update(self):
         if self.is_hit:
+            self.game.enemies.remove(self)
             self.stop_movement = True
             if len(self.explosion_frames) >0:
                 if self.frame_counter>= self.frame_delay:
@@ -44,7 +47,16 @@ class Enemy(pygame.sprite.Sprite):
                 else:
                     self.frame_counter+=1
             else:
-                self.kill()
+                if self.rect.x>=0 and self.rect.y>=0:
+                    enemy = Enemy(self.game)
+                    self.game.all_sprites.add(enemy)
+                    self.game.enemies.add(enemy)
+                    # Dentro il ciclo principale del gioco, quando uccidi un nemico
+                    if random.randint(1, 3) == 1:
+                        reward = Reward(self, self.game.WIDTH, self.game.HEIGHT)
+                        self.game.rewards.add(reward)
+                        self.game.all_sprites.add(reward)
+                    self.kill()
                 
         if self.stop_movement == False:
             choice = random.randint(1,30)

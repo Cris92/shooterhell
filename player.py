@@ -21,8 +21,9 @@ class Player(pygame.sprite.Sprite):
         self.rect.bottom = screen_height - 10
         self.screen_width = screen_width
         self.screen_height = screen_height
-        self.speed_x = 0
-        self.speed_y = 0
+        self.speed_up=1
+        self.speed_x = 0 * self.speed_up
+        self.speed_y = 0 * self.speed_up
         self.last_hit_time = 0
         self.is_shooting=False
         self.hit_duration = 2  # Durata dell'effetto di colpo (in secondi)
@@ -72,8 +73,8 @@ class Player(pygame.sprite.Sprite):
         if keystate[pygame.K_UP]:
             self.speed_y = -5
 
-        self.rect.x += self.speed_x
-        self.rect.y += self.speed_y
+        self.rect.x += self.speed_x *self.speed_up
+        self.rect.y += self.speed_y *self.speed_up
 
         if self.rect.left < 0:
             self.rect.left = 0

@@ -24,6 +24,7 @@ class Game:
         self.WIDTH = WIDTH
         self.HEIGHT = HEIGHT
         self.all_sprites = pygame.sprite.Group()
+        self.rewards = pygame.sprite.Group()
         self.enemies = pygame.sprite.Group()
         self.ally_bullets = pygame.sprite.Group()
         self.enemy_bullets = pygame.sprite.Group()
@@ -37,7 +38,7 @@ class Game:
 
         # Generazione iniziale di nemici
         for _ in range(8):
-            enemy = Enemy(WIDTH, HEIGHT, self.all_sprites, self.enemy_bullets)
+            enemy = Enemy(self)
             self.all_sprites.add(enemy)
             self.enemies.add(enemy)
 

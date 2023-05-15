@@ -3,6 +3,7 @@ import time
 from enemies import Enemy
 from player import Player
 import random
+import reward
 
 
 def update_game(game, events):
@@ -43,16 +44,13 @@ def update_game(game, events):
     # Collisioni tra proiettili e nemici
     hits = pygame.sprite.groupcollide(game.enemies, game.ally_bullets, False, False)
     for enemy,bullets in hits.items():
-        enemy.is_hit=True
+        if enemy.rect.x>=0 and enemy.rect.y>=0:
+            enemy.is_hit=True
+            game.score += 1
         for bullet in bullets:
             if bullet.type=="single_bullet":
-                bullet.kill()
-    for hit_enemy in hits:
-        if enemy.rect.x>=0 and enemy.rect.y>=0:
-            enemy = Enemy(game.WIDTH, game.HEIGHT, game.all_sprites, game.enemy_bullets)
-            game.all_sprites.add(enemy)
-            game.enemies.add(enemy)
-            game.score += 1
+                bullet.kill()            
+        
     
     # Collisioni tra proiettili e proiettili amici
     hits = pygame.sprite.groupcollide(game.enemy_bullets, game.ally_bullets, True, False)
@@ -62,14 +60,26 @@ def update_game(game, events):
                 a_bullet.kill()
 
     # Collisioni tra giocatore e nemici
-    hits = pygame.sprite.spritecollide(game.player, game.enemies, True)
+    hits = pygame.sprite.spritecollide(game.player, game.enemies, False)
     if hits:
         for hit_enemy in hits:
+            #Gestione del nemico
+            if hit_enemy.rect.x>=0 and hit_enemy.rect.y>=0:
+                hit_enemy.is_hit=True
+                game.score += 1
+            #Gestione del player
             hit_done=game.player.hit(hit_enemy.damage)
             if hit_done:
                 shake_screen(game,10, 0.2)
         if game.player.HP <= 0:
             open_game_over_menu(game)  # Apri il menu di game over
+
+    
+    # Collisioni tra giocatore e reward
+    hits = pygame.sprite.spritecollide(game.player, game.rewards, False)
+    if hits:
+        for reward in hits:
+           reward.apply_effect(game.player)
 
     # Collisioni tra giocatore e proiettili nemici
     hits = pygame.sprite.spritecollide(game.player, game.enemy_bullets, False)

@@ -33,7 +33,7 @@ class Bullet(pygame.sprite.Sprite):
             self.rect.bottom = self.rect.height - y
             self.speed_y = 0
             self.damage = damage
-            self.frame_duration = 1000
+            self.frame_duration = 100
             self.frame_thrown = 0
 
     def update(self):
@@ -49,8 +49,6 @@ class Bullet(pygame.sprite.Sprite):
             else:
                 self.rect.x =self.owner.rect.x
                 self.rect.bottom =self.owner.rect.y
-                print("frame thrown:"+str(self.frame_thrown))
-                print("frame duration:"+str(self.frame_duration))
                 if self.frame_duration==self.frame_thrown:
                     self.kill()
                 else:
